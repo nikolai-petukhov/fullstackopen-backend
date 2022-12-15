@@ -9,7 +9,7 @@
     "start": "node index.js",
     "build:ui": "rm -rf build && cd D:/IT_2/fullstackopen_course_repo/part2/phone-book && npm run build && cp -r build D:/IT_2/fullstackopen-backend",
     "deploy": "git push heroku main",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",    
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
     "logs:prod": "heroku logs --tail"
   },
   "repository": {
@@ -24,7 +24,9 @@
   "homepage": "https://github.com/nikolai-petukhov/fullstackopen-backend#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "mongoose": "^6.7.2",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
