@@ -24,7 +24,7 @@ app.get("/info", (request, response) => {
     response.send(`
         <p>Phonebook has info for ${count} people</p>
         <p>${new Date()}</p>
-    `);//
+    `);
   });
 });
 
