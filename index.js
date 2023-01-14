@@ -11,7 +11,7 @@ morgan.token("requestBody", (request, response) => {
 });
 
 app.use(express.json());
-app.use(
+app.use(//
   morgan(
     ":method :url :status :res[content-length] - :response-time ms :requestBody"
   )
