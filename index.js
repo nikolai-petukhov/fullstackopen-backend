@@ -42,26 +42,23 @@ app.get("/api/persons/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/persons", (request, response) => {
-  const body = request.body;
+app.post("/api/persons", (request, response, next) => {
+  const { name, number } = request.body;
 
-  !body && response.status(400).json({ error: "content is missing" });
+  !request.body && response.status(400).json({ error: "content is missing" });
+  !name && response.status(400).json({ error: "name is missing" });
+  !number && response.status(400).json({ error: "number is missing" });
 
-  !body.name && response.status(400).json({ error: "name is missing" });
-
-  !body.number && response.status(400).json({ error: "number is missing" });
-
-  //   persons.find((person) => person.name === body.name) &&
-  //     response.status(400).json({ error: "name must be unique" });
-
-  const newPerson = {
-    name: body.name,
-    number: body.number,
-  };
-
-  Person.create(newPerson);
-
-  response.json(newPerson);
+  const person = new Person({
+    name: name,
+    number: number,
+  });
+  
+  person.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
+    })
+    .catch(error => next(error));
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
@@ -71,14 +68,13 @@ app.delete("/api/persons/:id", (request, response, next) => {
 });
 
 app.put("/api/persons/:id", (request, response, next) => {
-  const body = request.body;
+  const { name, number } = request.body;
 
-  const person = {
-    name: body.name,
-    number: body.number,
-  };
-
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
+  )
     .then((updatedPerson) => {
       response.json(updatedPerson);
     })
@@ -90,6 +86,10 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "person not found" });
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  } else if ( error.name === 'MongoServerError') {
+    return response.status(400).json({ error: error.message })
   }
 
   next(error);
